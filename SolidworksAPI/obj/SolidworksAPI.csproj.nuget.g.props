@@ -13,6 +13,6 @@
     <SourceRoot Include="C:\Users\tanner.troumbley\.nuget\packages\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgXarial_XCad_SolidWorks Condition=" '$(PkgXarial_XCad_SolidWorks)' == '' ">C:\Users\tanner.troumbley\.nuget\packages\xarial.xcad.solidworks\0.8.3</PkgXarial_XCad_SolidWorks>
+    <PkgBlueByte_SOLIDWORKS_Interops Condition=" '$(PkgBlueByte_SOLIDWORKS_Interops)' == '' ">C:\Users\tanner.troumbley\.nuget\packages\bluebyte.solidworks.interops\2021.3.0</PkgBlueByte_SOLIDWORKS_Interops>
   </PropertyGroup>
 </Project>

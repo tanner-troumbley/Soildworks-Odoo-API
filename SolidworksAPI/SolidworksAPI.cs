@@ -1,9 +1,9 @@
-// Only works with Solidworks Installed.
+﻿// Only works with Solidworks Installed.
 using System.Runtime.InteropServices;
-// using SolidWorks.Interop.sldworks;
-// using SolidWorks.Interop.swconst;
+using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 
-namespace SolidWorksApiExample
+namespace SolidWorksApi
 {
     class Program
     {

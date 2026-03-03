@@ -79,3 +79,4 @@ C:\Users\tanne\code\Soildworks-Odoo-API\OdooApi\obj\Debug\net10.0\refint\OdooApi
 C:\Users\tanne\code\Soildworks-Odoo-API\OdooApi\obj\Debug\net10.0\OdooApi.pdb
 C:\Users\tanne\code\Soildworks-Odoo-API\OdooApi\obj\Debug\net10.0\OdooApi.genruntimeconfig.cache
 C:\Users\tanne\code\Soildworks-Odoo-API\OdooApi\obj\Debug\net10.0\ref\OdooApi.dll
+C:\Users\tanner.troumbley\PycharmProjects\Solidworks API\OdooApi\obj\Debug\net10.0\OdooApi.sourcelink.json

@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "dgSpecHash": "W1wxKUANgL4=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\tanner.troumbley\\PycharmProjects\\Solidworks API\\SolidworksAPI\\SolidworksAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\tanner.troumbley\\.nuget\\packages\\bluebyte.solidworks.interops\\2021.3.0\\bluebyte.solidworks.interops.2021.3.0.nupkg.sha512",
+    "C:\\Users\\tanner.troumbley\\.nuget\\packages\\bluebyte.solidworks.sdk\\2021.0.55\\bluebyte.solidworks.sdk.2021.0.55.nupkg.sha512",
+    "C:\\Users\\tanner.troumbley\\.nuget\\packages\\simpleinjector\\5.3.2\\simpleinjector.5.3.2.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "Package 'BlueByte.SOLIDWORKS.Interops 2021.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0'. This package may not be fully compatible with your project.",
+      "projectPath": "C:\\Users\\tanner.troumbley\\PycharmProjects\\Solidworks API\\SolidworksAPI\\SolidworksAPI.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\tanner.troumbley\\PycharmProjects\\Solidworks API\\SolidworksAPI\\SolidworksAPI.csproj",
+      "libraryId": "BlueByte.SOLIDWORKS.Interops",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "Package 'BlueByte.SOLIDWORKS.SDK 2021.0.55' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0'. This package may not be fully compatible with your project.",
+      "projectPath": "C:\\Users\\tanner.troumbley\\PycharmProjects\\Solidworks API\\SolidworksAPI\\SolidworksAPI.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\tanner.troumbley\\PycharmProjects\\Solidworks API\\SolidworksAPI\\SolidworksAPI.csproj",
+      "libraryId": "BlueByte.SOLIDWORKS.SDK",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}

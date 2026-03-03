@@ -87,7 +87,7 @@ namespace OdooApi
         /// <summary>
         /// Internal method to call Odoo execute_kw.
         /// </summary>
-        private async Task<JsonElement> ExecuteKwAsync(string model, string method, object[] args, object kwargs = null)
+        private async Task<JsonElement> ExecuteKwAsync(string model, string method, object[] args, object? kwargs = null)
         {
             var payload = new
             {

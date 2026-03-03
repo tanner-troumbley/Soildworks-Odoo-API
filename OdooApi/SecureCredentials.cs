@@ -30,7 +30,7 @@ public class SecureCredentials
 
                 // Add Pop up to input all the information at once.
                 Console.Write($"Please Enter value for {secret}: ");
-                secertValue = Console.ReadLine()?.Trim();
+                secertValue = Console.ReadLine()?.Trim() ?? "";
                 // Save to local cache for future use
                 SaveSecretToLocalCache(secret, secertValue);
             }
@@ -39,7 +39,7 @@ public class SecureCredentials
         catch (Exception ex)
         {
             Console.WriteLine($"Error retrieving {secret}: {ex.Message}");
-            return null;
+            return "";
         }
     }
 
@@ -62,7 +62,7 @@ public class SecureCredentials
             // If decryption fails, treat as cache miss
         }
 
-        return null;
+        return "";
     }
 
     private async Task<string> GetSecretFromKeyVault(string secretName)
