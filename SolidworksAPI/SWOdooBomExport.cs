@@ -13,8 +13,7 @@ public class SWOdooBomExport
 {
     public class BomNode
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
+        public required string Name { get; set; }
         public int Quantity { get; set; }
         public bool IsAssembly { get; set; }
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
@@ -28,8 +27,7 @@ public class SWOdooBomExport
             try
             {
                 // Connect to SOLIDWORKS
-                var swApp = Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application")) as SldWorks;
-                if (swApp == null)
+                if (Activator.CreateInstance(Type.GetTypeFromProgID("SldWorks.Application")) is not SldWorks swApp)
                 {
                     Console.WriteLine("Unable to connect to SOLIDWORKS.");
                     return;
@@ -38,29 +36,43 @@ public class SWOdooBomExport
                 swApp.Visible = true;
 
                 // Get active document
-                var swModel = swApp.ActiveDoc as ModelDoc2;
-                if (swModel == null)
+                if (swApp.ActiveDoc is not ModelDoc2 swModel)
                 {
                     Console.WriteLine("No active document found.");
                     return;
                 }
-                AssemblyDoc swAssembly = (AssemblyDoc)swModel;
-                swAssembly.ResolveAllLightWeightComponents(true);
 
-                // Pass SW Assembly Use Componts in BuildBomTree
-                object[] rootComp = (object[])swAssembly.GetComponents(false);
-                Console.WriteLine($"ROOT LENGTH: {rootComp.Length}");
+                BomNode swBOMTree;
+                int docType = swModel.GetType();
+                if (docType == (int)swDocumentTypes_e.swDocASSEMBLY)
+                {
 
-                // Build BOM recursively
-                BomNode swBOMTree = BuildBomTree(rootComp[0] as Component2, 1);
+                    AssemblyDoc swAssembly = (AssemblyDoc)swModel;
+                    // Need to resolve Lightweight to get all the data needed.
+                    swAssembly.ResolveAllLightWeightComponents(true);
+
+                    Component2 rootComp = swAssembly.GetEditTargetComponent();
+                    
+                    // Build BOM recursively
+                    swBOMTree = BuildBomTree(rootComp, 1);
+                }
+                else
+                {
+                    swBOMTree = new BomNode
+                    {
+                        Name = Path.GetFileNameWithoutExtension(swModel.GetTitle()),
+                        Quantity = 1,
+                        IsAssembly = false,  
+                    };
+                    ExtractCustomProperties(swModel, swBOMTree.Properties);
+
+                }
 
                 // Export to JSON
                 string json = JsonSerializer.Serialize(swBOMTree, new JsonSerializerOptions
                 {
                     WriteIndented = true
                 });
-
-                // Should be 15 Children for 1399
                 string outputPath = $"C:/Users/tanner.troumbley/PycharmProjects/Solidworks API/{Path.GetFileNameWithoutExtension(swModel.GetTitle())}-tree.json";
                 File.WriteAllText(outputPath, json);
                 Console.WriteLine($"BOM exported to: {outputPath}");    
@@ -71,15 +83,17 @@ public class SWOdooBomExport
             }
         }
 
-        static BomNode BuildBomTree(Component2 comp, int quantity)
-        // Change to Assembly and loop through components. Try to be recursive for assemblies.
+        static BomNode? BuildBomTree(Component2 comp, int quantity)
         {
             if (comp == null || comp.IsSuppressed()) return null;
+            if (comp.IsVirtual) return null;
+
             string compPath = comp.GetPathName();
 
             if (string.IsNullOrEmpty(compPath)) return null;
             bool isAssembly = comp.GetModelDoc2() is AssemblyDoc;
- 
+           
+
             BomNode node = new BomNode
             {
                 Name = Path.GetFileNameWithoutExtension(compPath),
@@ -87,35 +101,33 @@ public class SWOdooBomExport
                 IsAssembly = isAssembly,
             };
 
-            ExtractCustomProperties(comp, node.Properties);
+            ModelDoc2 model = (ModelDoc2)comp.GetModelDoc2();
+            if (model != null) ExtractCustomProperties(model, node.Properties);
 
             if (isAssembly)
             {
-
                 Dictionary<string, (Component2 comp, int qty)> childMap = new Dictionary<string, (Component2, int)>(StringComparer.OrdinalIgnoreCase);
 
-                // object[] rootComp = (object[])swAssembly.GetComponents(false);
-                object children = comp.GetChildren();
-                Console.WriteLine($"CHildren: {children} for {Path.GetFileNameWithoutExtension(compPath)}");
+                object swchildren = comp.GetChildren();
 
-                if (children != null)
+                if (swchildren is object[] children)
                 {
-                    foreach (Component2 child in children as object[])
+                    foreach (Component2 child in children.Cast<Component2>())
                     {
                         if (child == null || child.IsSuppressed()) continue;
                         string childPath = child.GetPathName();
 
                         if (string.IsNullOrEmpty(childPath)) continue;
- 
-                        if (!childMap.ContainsKey(childPath)) 
+
+                        if (!childMap.ContainsKey(childPath))
                             childMap[childPath] = (child, 0);
-                        
+
                         childMap[childPath] = (child, childMap[childPath].qty + 1);
                     }
- 
+
                     foreach (var kvp in childMap)
                     {
-                        BomNode childNode = BuildBomTree(kvp.Value.comp, kvp.Value.qty);
+                        BomNode? childNode = BuildBomTree(kvp.Value.comp, kvp.Value.qty);
                         if (childNode != null) node.Children.Add(childNode);
                     }
                 }
@@ -123,21 +135,15 @@ public class SWOdooBomExport
             return node;
         }
 
-        static void ExtractCustomProperties(Component2 comp, Dictionary<string, string> props)
+        static void ExtractCustomProperties(ModelDoc2 model, Dictionary<string, string> props)
         {
             try
-            {
-                ModelDoc2 model = (ModelDoc2)comp.GetModelDoc2();
-                if (model == null) return;
- 
+            { 
                 CustomPropertyManager propMgr = model.Extension.CustomPropertyManager[""]; 
                 string [] propNames = (string[]) propMgr.GetNames();
                 foreach (string key in propNames)
                 {
-                    string valOut;
-                    string resolvedVal;
-
-                    propMgr.Get4(key, true, out valOut, out resolvedVal);
+                    propMgr.Get4(key, true, out string valOut, out string resolvedVal);
 
                     if (!string.IsNullOrEmpty(valOut)) 
                         props[key] = valOut;
@@ -146,9 +152,9 @@ public class SWOdooBomExport
                         props[key] = resolvedVal;    
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore property extraction errors
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
     }
