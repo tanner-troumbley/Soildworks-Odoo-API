@@ -48,6 +48,7 @@ public class SWOdooBomImport
                 if (swApp.ActiveDoc is not ModelDoc2 swModel)
                 {
                     Logger.Error("No active document found in Solidworks.");
+                    Console.WriteLine("No Active Doc");
                     await Logger.ShutdownAsync(); // Gracefully stop logger
                     return;
                 }
@@ -95,6 +96,7 @@ public class SWOdooBomImport
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Main {ex}");
                 Logger.Error(ex.Message);
             }
         }
@@ -185,6 +187,7 @@ public class SWOdooBomImport
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"ExtractCustomProperties {ex}");
                 Logger.Error(ex.Message);
             }
         }
