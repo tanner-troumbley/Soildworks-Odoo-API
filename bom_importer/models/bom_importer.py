@@ -27,7 +27,9 @@ class BOMImporter(models.Model):
     def import_bom_json(self, bom_json_str):
         """Import entire BOM in one transaction with field validation and reporting"""
         bom_data = json.loads(bom_json_str)
-        property_field_map = { self.line_ids.filed_id.mapped('name'): self.line_ids.mapped('name') }
+        if self.line_ids:
+            # Should give a dict of swkey: odooKey
+            property_field_map = {self.line_ids.field_id.mapped('name') : self.line_ids.mapped('name')}
 
         Product = self.env['product.product']
 
@@ -38,12 +40,13 @@ class BOMImporter(models.Model):
             "missing_fields": []
         }
 
-        def get_or_create_product(product):
-            product_code = product['Name']
-            if product['Properties'].get('Revision', False):
-                product_code +=  product['Properties']['Revision'].encode("utf-8").decode("unicode_escape")
+        def get_or_create_product(swproduct):
+            # This is useful if the Data from the Json is mapped without transformation.
+            vals = {}
+            for swKey, odooKey in property_field_map.items():
+                vals[odooKey] = swproduct['Properties'].get(swKey, False)
                 
-            product = Product.search([('default_code', '=', product_code)], limit=1)
+            product = Product.search([('name', '=', swproduct['Name'])], limit=1)
             vals = {}
             for key, value in property_field_map.items():
                 vals[key] = property_field_map.get(value, False)
@@ -51,12 +54,13 @@ class BOMImporter(models.Model):
             if product:
                 if vals:
                     product.write(vals)
-                    report["products_updated"].append(product_code)
+                    report["products_updated"].append(swproduct['Name'])
             else:
-                vals['name'] = product["Properties"]['Description']
+                vals['name'] = swproduct["Properties"]['Description']
+                vals['default_code'] = swproduct['Name']
                 vals['type'] = 'product'
                 product = Product.create(vals)
-                report["products_created"].append(product_code)
+                report["products_created"].append(swproduct['Name'])
             return product
 
         def process_assembly(assembly):
@@ -75,7 +79,7 @@ class BOMImporter(models.Model):
                     'type': 'normal',
                     'bom_line_ids': bom_lines
                 })
-                report["boms_created"].append(assembly)
+                report["boms_created"].append((assembly, bom))
             if assembly['IsAssembly']:
                 process_assembly(assembly)
 
