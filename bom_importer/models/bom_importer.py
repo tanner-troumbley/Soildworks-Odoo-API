@@ -5,7 +5,7 @@ class BOMImporterLine(models.Model):
     _name="bom.importer.line"
     _description="BOM Impoter Mapping"            
 
-    name = fields.Text(string='Original Field', copy=False, store=True, required=True)
+    name = fields.Text(string='SW Property', copy=False, store=True, required=True)
     field_id = fields.Many2one('ir.model.fields', domian='[("model_id", "ilike", "product.product")]', string='Odoo Field', copy=False, store=True, required=True, ondelete='cascade')
     bom_importer_id = fields.Many2one('bom.importer', ondelete="cascade", required=True)
     
