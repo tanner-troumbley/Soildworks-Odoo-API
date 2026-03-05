@@ -36,6 +36,6 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="bom_importer" id="bom_importer.menu_root" parent="mrp.menu_mrp_configuration" sequence="110" action="bom_importer_action_window"/>
+    <menuitem name="BOM Importer" id="bom_importer.menu_root" parent="mrp.menu_mrp_configuration" sequence="110" action="bom_importer_action_window"/>
   </data>
 </odoo>
